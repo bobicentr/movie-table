@@ -1,8 +1,10 @@
-import { useEffect, useState } from 'react'
+import React, { useState, useEffect } from 'react'
 
 import MovieRow from './components/MovieRow'
 import SearchBox from './components/SearchBox'
 import { supabase } from './client.js'
+import Slider from 'rc-slider'
+import 'rc-slider/assets/index.css'
 
 function App() {
   const [movies, setMovies] = useState([])
@@ -50,7 +52,7 @@ function App() {
 
   const [searchTerm, setSearchTerm] = useState('')
   const [selectTerm, setSelectTerm] = useState('')
-  const [yearPicker, setYearPicker] = useState('')
+  const [yearRange, setYearRange] = useState([1950, 2025])
  
   const selectHandle = (event) => {
     setSelectTerm(event.target.value)
@@ -59,7 +61,7 @@ function App() {
   const filteredMovies = movies.filter(movie => {
     const matchTitle = (movie.title || "").toLowerCase().includes(searchTerm.toLowerCase())
     const matchType = (movie.type || "").toLowerCase().includes(selectTerm.toLowerCase())
-    return matchTitle && matchType
+    return matchTitle && matchType && movie.year > yearRange[0] && movie.year < yearRange[1]
   })
 
   return (
@@ -77,7 +79,7 @@ function App() {
       </div>
       <div className="col-md-4">
         <select className='form-select bg-white text-dark' value={selectTerm} onChange={selectHandle} name="" id="">
-          <option selected="" value="">All</option>
+          <option value="">All</option>
           <option value="Фильм">Films</option>
           <option value="Сериал">Series</option>
           <option value="Аниме">Anime</option>
@@ -85,6 +87,27 @@ function App() {
           <option value="Аниме-сериал">Anime-series</option>
         </select>
       </div>
+      <Slider className='col-md-4' range min={1950} max={2025} 
+      value={yearRange}
+      onChange={(value) => setYearRange(value)} 
+      styles={{
+        track: { backgroundColor: 'lightblue' }, 
+        handle: { 
+            borderColor: 'lightblue', 
+            backgroundColor: '#fff',
+            opacity: 1,
+            boxShadow: 'none'
+        },
+        rail: { backgroundColor: '#ccc' }
+      }}
+      handleRender={(node, handleProps) => {
+        return React.cloneElement(node, {}, (
+            <div className="slider-tooltip">
+                {handleProps.value}
+            </div>
+        ));
+      }}
+    />
     </div>
     <table className="table table-hover">
     <thead>
