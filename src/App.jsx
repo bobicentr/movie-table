@@ -50,6 +50,7 @@ function App() {
 
   const [searchTerm, setSearchTerm] = useState('')
   const [selectTerm, setSelectTerm] = useState('')
+  const [yearPicker, setYearPicker] = useState('')
  
   const selectHandle = (event) => {
     setSelectTerm(event.target.value)
