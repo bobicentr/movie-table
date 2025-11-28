@@ -38,7 +38,6 @@ This project is currently being refactored and expanded. Planned updates:
 - [ ] **Client-side Filtering:** Search by title, type, and year without extra API calls.
 - [ ] **Admin Panel:** Implementation of Supabase Auth (RLS) to secure delete/add actions.
 - [ ] **Advanced Sorting:** Sort by Rating or Year.
-- [ ] **Edit Mode:** Ability to add custom user reviews or change "Watched" status.
 
 ## 📦 How to Run Locally
 
@@ -56,4 +55,4 @@ This project is currently being refactored and expanded. Planned updates:
     ```
 
 ---
-*Created by [bobicentr]*
+*Created by bobicentr*
