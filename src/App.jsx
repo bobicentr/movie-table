@@ -9,6 +9,17 @@ import 'rc-slider/assets/index.css'
 import OfferedMoviesTable from './components/OfferedMoviesTable.jsx'
 
 function App() {
+  const [theme, setTheme] = useState('dark')
+
+  // Функция переключения
+  const toggleTheme = () => {
+      setTheme(prev => prev === 'dark' ? 'light' : 'dark')
+  }
+
+  // Эффект: вешает атрибут на весь сайт
+  useEffect(() => {
+      document.documentElement.setAttribute('data-bs-theme', theme)
+  }, [theme])
   const [movies, setMovies] = useState([])
 
   const [isModalOpen, setIsModalOpen] = useState(false)
@@ -108,6 +119,8 @@ function App() {
   return (
   <div className="container mt-4">
     <div className="container row">
+      
+      
       <div className="col-md-4">
         <input 
           type="text" 
@@ -118,7 +131,7 @@ function App() {
         />
       </div>
       <div className="col-md-4">
-        <select className='form-select bg-white text-dark' value={selectTerm} onChange={selectHandle} name="" id="">
+        <select className='form-select' value={selectTerm} onChange={selectHandle} name="" id="">
           <option value="">All</option>
           <option value="Фильм">Films</option>
           <option value="Сериал">Series</option>
@@ -130,18 +143,20 @@ function App() {
       
       {!session ? (
             // Если НЕТ сессии -> Кнопка открытия модалки
-            <button className="btn btn-primary col-4" onClick={() => setIsModalOpen(true)}>
+            <button className="btn btn-primary col-md-2" onClick={() => setIsModalOpen(true)}>
                Log In
             </button>
         ) : (
             // Если ЕСТЬ сессия -> Кнопка выхода
-            <div className="d-flex gap-2 align-items-center col-4">
-               <span>Hi, {session.user.email}</span>
+            <div className="d-flex gap-2 align-items-center col-md-2">
                <button className="btn btn-danger" onClick={handleLogout}>
                   Log Out
                </button>
             </div>
         )}
+      <div className="col-2"><button className="btn btn-outline-secondary col-12" onClick={toggleTheme}>
+          {theme === 'dark' ? <i className="bi bi-sun-fill"></i> : <i className="bi bi-moon-fill"></i>}
+      </button></div>
     </div>
     <div className="container-fluid row">
     <Slider className='col-md-12 mt-5' range min={1950} max={2025} 
@@ -173,33 +188,41 @@ function App() {
     />
     )}
     <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>
-    <table className="table table-hover">
-    <thead>
-      <tr className='row'>
-        <th className='col-1'>Poster</th>
-        <th className='col-2'>Title</th>
-        <th className='col-1'>Year</th>
-        <th className='col-1'>Rating</th>
-        <th className='col-3'>Genre</th>
-        <th className='col-1'>Length</th>
-        <th className='col-2'>Type</th>
-        {!session ? (
-          <></>
-        ) : (
-        <th className='col-1'>Actions</th>
-        )}
+    <div style={{ maxHeight: '70vh', overflowY: 'auto', border: '1px solid #444', borderRadius: '8px' }}>
+  
+  <table className="table table-hover table-sm mb-0"> {/* table-sm = компактность */}
+    
+    {/* position: sticky делает шапку плавающей. backgroundColor обязателен! */}
+    <thead style={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: '#212529', color: 'white' }}>
+      <tr>
+        {/* Задаем ширину здесь, тело таблицы подстроится само */}
+        <th style={{ width: '60px' }}>Poster</th>
+        <th style={{ width: '25%' }}>Title</th>
+        <th style={{ width: '80px' }}>Year</th>
+        <th style={{ width: '80px' }}>Rating</th>
+        <th style={{ width: '20%' }}>Genre</th>
+        <th style={{ width: '100px' }}>Length</th>
+        <th style={{ width: '100px' }}>Type</th>
+        
+        {/* Условие для заголовка Actions */}
+        {session && <th style={{ width: '80px' }}>Actions</th>}
       </tr>
     </thead>
+
     <tbody>
       {filteredMovies.map((movie) => (
          <MovieRow 
-            key={movie.poster} 
+            // Используй ID если есть, poster как ключ ненадежен (могут быть одинаковые)
+            key={movie.id || movie.poster} 
             movie={movie} 
-            deleteAction={deleteMovie} session={session}
+            deleteAction={deleteMovie} 
+            session={session}
          />
       ))}
     </tbody>
   </table>
+
+</div>
   </div>
 
   
