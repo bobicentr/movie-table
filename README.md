@@ -1,7 +1,5 @@
 # 🎬 Personal Movie Database (React + Supabase)
 
-🔴 **Live Demo:** [Click here to view the App](https://bobicentr.github.io/movie-table/)
-
 > **Status:** 🚧 Work in Progress (Active Development)
 
 A dynamic dashboard for managing a personal movie watchlist. This application demonstrates the integration between a **Frontend** (React), a **Backend-as-a-Service** (Supabase), and **External APIs** (OMDb).
