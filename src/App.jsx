@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 
 import MovieRow from './components/MovieRow'
-import SearchBox from './components/SearchBox'
+import SearchBox from './components/SuggestBox.jsx'
 import { supabase } from './client.js'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
@@ -66,7 +66,6 @@ function App() {
 
   return (
   <div className="container mt-4">
-    <SearchBox addAction={addMovie}/>
     <div className="container row">
       <div className="col-md-4">
         <input 
@@ -87,7 +86,7 @@ function App() {
           <option value="Аниме-сериал">Anime-series</option>
         </select>
       </div>
-      <Slider className='col-md-4' range min={1950} max={2025} 
+      <Slider className='col-md-4 mt-3' range min={1950} max={2025} 
       value={yearRange}
       onChange={(value) => setYearRange(value)} 
       styles={{
@@ -109,6 +108,8 @@ function App() {
       }}
     />
     </div>
+
+    <SearchBox addAction={addMovie}/>
     <table className="table table-hover">
     <thead>
       <tr>
