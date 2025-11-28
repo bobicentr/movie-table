@@ -1,16 +1,61 @@
-# React + Vite
+# 🎬 Personal Movie Database (React + Supabase)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+🔴 **Live Demo:** [Click here to view the App](https://bobicentr.github.io/movie-table/)
 
-Currently, two official plugins are available:
+> **Status:** 🚧 Work in Progress (Active Development)
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Babel](https://babeljs.io/) (or [oxc](https://oxc.rs) when used in [rolldown-vite](https://vite.dev/guide/rolldown)) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+A dynamic dashboard for managing a personal movie watchlist. This application demonstrates the integration between a **Frontend** (React), a **Backend-as-a-Service** (Supabase), and **External APIs** (OMDb).
 
-## React Compiler
+The goal of the project is to build a hybrid system where users can search for global movie data and save it to their private persistent database.
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## 🛠 Tech Stack
 
-## Expanding the ESLint configuration
+*   **Frontend:** React.js (Vite), JavaScript (ES6+)
+*   **Styling:** Bootstrap 5 (Responsive Layout)
+*   **Database:** Supabase (PostgreSQL)
+*   **External API:** OMDb API (Fetching movie metadata like posters, ratings, plots)
+*   **Architecture:** Component-based, State-driven UI
 
-If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+## ⚡ Key Features (Implemented)
+
+*   **Database Integration:**
+    *   Real-time data fetching from **Supabase** via `@supabase/supabase-js`.
+    *   Data mapping from database columns to UI components.
+*   **Hybrid Data Flow:**
+    *   Search for movies via **OMDb API** (External).
+    *   Save selected movies to **Supabase** (Internal DB).
+*   **UI/UX:**
+    *   Transformation from Card Grid to **Table View** for better data density.
+    *   Live Search with Autocomplete (Dropdown list with posters).
+    *   Responsive design (Mobile-friendly).
+*   **CRUD Operations:**
+    *   **Create:** Add movies to the database with auto-filled metadata.
+    *   **Read:** Display watchlist with sorting.
+    *   **Delete:** Remove records from the database.
+
+## 🚀 Roadmap (Upcoming Features)
+
+This project is currently being refactored and expanded. Planned updates:
+
+- [ ] **Client-side Filtering:** Search by title, type, and year without extra API calls.
+- [ ] **Admin Panel:** Implementation of Supabase Auth (RLS) to secure delete/add actions.
+- [ ] **Advanced Sorting:** Sort by Rating or Year.
+- [ ] **Edit Mode:** Ability to add custom user reviews or change "Watched" status.
+
+## 📦 How to Run Locally
+
+1.  **Clone the repository:**
+    ```bash
+    git clone https://github.com/bobicentr/movie-table.git
+    ```
+2.  **Install dependencies:**
+    ```bash
+    npm install
+    ```
+3.  **Start the development server:**
+    ```bash
+    npm run dev
+    ```
+
+---
+*Created by [Your Name/Nickname]*
