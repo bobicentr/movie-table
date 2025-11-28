@@ -2,13 +2,41 @@ import React, { useState, useEffect } from 'react'
 
 import MovieRow from './components/MovieRow'
 import SearchBox from './components/SuggestBox.jsx'
+import LoginModal from './components/LoginModal.jsx'
 import { supabase } from './client.js'
 import Slider from 'rc-slider'
 import 'rc-slider/assets/index.css'
+import OfferedMoviesTable from './components/OfferedMoviesTable.jsx'
 
 function App() {
   const [movies, setMovies] = useState([])
 
+  const [isModalOpen, setIsModalOpen] = useState(false)
+
+  const [session, setSession] = useState(null)
+  
+  useEffect(() => {
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      setSession(session)
+    })
+
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session) // Обновляем стейт, React перерисовывает экран
+    })
+
+    return () => subscription.unsubscribe()
+  }, []) // Пустой массив = запустить 1 раз при старте
+
+  
+  // --- Дополнительно: Функция выхода ---
+  const handleLogout = async () => {
+      await supabase.auth.signOut()
+      // setSession(null) писать не обязательно, 
+      // так как сработает слушатель onAuthStateChange (Часть Б)
+  }
+ 
   const fetchMovies = async () => {
     const { data, error } = await supabase
       .from('movies')
@@ -25,8 +53,21 @@ function App() {
     }
   }
 
-  const deleteMovie = (idToDelete) => {
-    setMovies(movies.filter(movie => movie.id !== idToDelete))
+  const deleteMovie = async (urlToDelete) => {
+    // 1. Удаляем из Базы Данных (Supabase)
+    const { error } = await supabase
+            .from('movies')
+            .delete()
+            .eq('posterUrl', urlToDelete) // Ищем в базе по колонке posterUrl
+
+        if (!error) {
+            // 2. Удаляем из Локального Стейта (UI)
+            // Ошибка была тут: item.urlToDelete
+            // Правильно: item.posterUrl (свойство объекта) !== urlToDelete (переменная)
+            setMovies(movies.filter(item => item.poster !== urlToDelete))
+        } else {
+            alert(error.message)
+        }
 }
 
   const [error, setError] = useState('');
@@ -86,7 +127,24 @@ function App() {
           <option value="Аниме-сериал">Anime-series</option>
         </select>
       </div>
-      <Slider className='col-md-4 mt-3' range min={1950} max={2025} 
+      
+      {!session ? (
+            // Если НЕТ сессии -> Кнопка открытия модалки
+            <button className="btn btn-primary col-4" onClick={() => setIsModalOpen(true)}>
+               Log In
+            </button>
+        ) : (
+            // Если ЕСТЬ сессия -> Кнопка выхода
+            <div className="d-flex gap-2 align-items-center col-4">
+               <span>Hi, {session.user.email}</span>
+               <button className="btn btn-danger" onClick={handleLogout}>
+                  Log Out
+               </button>
+            </div>
+        )}
+    </div>
+    <div className="container-fluid row">
+    <Slider className='col-md-12 mt-5' range min={1950} max={2025} 
       value={yearRange}
       onChange={(value) => setYearRange(value)} 
       styles={{
@@ -108,19 +166,28 @@ function App() {
       }}
     />
     </div>
-
     <SearchBox addAction={addMovie}/>
+    {session && (
+    <OfferedMoviesTable 
+        onMovieAdded={() => fetchMovies()} // Перезапрашиваем основную таблицу при успехе
+    />
+    )}
+    <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>
     <table className="table table-hover">
     <thead>
-      <tr>
-        <th>Poster</th>
-        <th>Title</th>
-        <th>Year</th>
-        <th>Rating</th>
-        <th>Genre</th>
-        <th>Length</th>
-        <th>Type</th>
-        <th>Actions</th>
+      <tr className='row'>
+        <th className='col-1'>Poster</th>
+        <th className='col-2'>Title</th>
+        <th className='col-1'>Year</th>
+        <th className='col-1'>Rating</th>
+        <th className='col-3'>Genre</th>
+        <th className='col-1'>Length</th>
+        <th className='col-2'>Type</th>
+        {!session ? (
+          <></>
+        ) : (
+        <th className='col-1'>Actions</th>
+        )}
       </tr>
     </thead>
     <tbody>
@@ -128,7 +195,7 @@ function App() {
          <MovieRow 
             key={movie.poster} 
             movie={movie} 
-            deleteAction={deleteMovie} 
+            deleteAction={deleteMovie} session={session}
          />
       ))}
     </tbody>
