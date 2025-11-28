@@ -11,7 +11,7 @@ The goal of the project is to build a hybrid system where users can search for g
 *   **Frontend:** React.js (Vite), JavaScript (ES6+)
 *   **Styling:** Bootstrap 5 (Responsive Layout)
 *   **Database:** Supabase (PostgreSQL)
-*   **External API:** OMDb API (Fetching movie metadata like posters, ratings, plots)
+*   **External API:** KinopoiskUnofficial API (Fetching movie metadata like posters, ratings)
 *   **Architecture:** Component-based, State-driven UI
 
 ## ⚡ Key Features (Implemented)
@@ -20,7 +20,7 @@ The goal of the project is to build a hybrid system where users can search for g
     *   Real-time data fetching from **Supabase** via `@supabase/supabase-js`.
     *   Data mapping from database columns to UI components.
 *   **Hybrid Data Flow:**
-    *   Search for movies via **OMDb API** (External).
+    *   Search for movies via **KinopoiskUnofficial API** (External).
     *   Save selected movies to **Supabase** (Internal DB).
 *   **UI/UX:**
     *   Transformation from Card Grid to **Table View** for better data density.
@@ -56,4 +56,4 @@ This project is currently being refactored and expanded. Planned updates:
     ```
 
 ---
-*Created by [Your Name/Nickname]*
+*Created by [bobicentr]*
