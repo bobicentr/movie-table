@@ -1,21 +1,27 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
-import MovieCard from './components/MovieRow'
+import MovieRow from './components/MovieRow'
 import SearchBox from './components/SearchBox'
+import { supabase } from './client.js'
 
 function App() {
-  const [movies, setMovies] = useState([
-    {
-        id: 1, 
-        title: "Oldboy", 
-        year: 2003, 
-        genre: "Thriller, Mystery", // Жанры лучше писать строкой через запятую, как в API
-        poster: "https://m.media-amazon.com/images/M/MV5BMTAwNzNjYWItZmI0Ni00ZTcyLWIwNWMtZjlmNGMxZTEyYTJmXkEyXkFqcGc@._V1_FMjpg_UX1000_.jpg",
-        plot: "After being kidnapped and imprisoned for fifteen years, Oh Dae-Su is released, only to find that he must find his captor in five days.",
-        rating: "8.4" 
-    },
-    // ... другие фильмы
-])
+  const [movies, setMovies] = useState([])
+
+  const fetchMovies = async () => {
+    const { data, error } = await supabase
+      .from('movies')
+      .select('poster:posterUrl, title:name, year, genre:genres, rating, length: filmLength, type')
+    if (error) {
+      console.log('Ошибка при загрузке:', error)
+      return // Выходим, дальше не идем
+    }
+
+  // Если ошибки нет — обновляем стейт
+    if (data) {
+        console.log('Пришли данные:', data) // <-- Посмотри сюда в консоли браузера!
+        setMovies(data)
+    }
+  }
 
   const deleteMovie = (idToDelete) => {
     setMovies(movies.filter(movie => movie.id !== idToDelete))
@@ -32,21 +38,76 @@ function App() {
       plot: data.Plot,
       imdbRating: data.imdbRating,
       genre: data.Genre,
-      poster: data.Poster
+      poster: data.Poster,
     }
 
     setMovies([...movies, newMovie])
   }
 
+  useEffect(() => {
+    fetchMovies()
+  }, [])
+
+  const [searchTerm, setSearchTerm] = useState('')
+  const [selectTerm, setSelectTerm] = useState('')
+ 
+  const selectHandle = (event) => {
+    setSelectTerm(event.target.value)
+  }
+
+  const filteredMovies = movies.filter(movie => {
+    const matchTitle = (movie.title || "").toLowerCase().includes(searchTerm.toLowerCase())
+    const matchType = (movie.type || "").toLowerCase().includes(selectTerm.toLowerCase())
+    return matchTitle && matchType
+  })
+
   return (
   <div className="container mt-4">
-  
-    <div className="row">
     <SearchBox addAction={addMovie}/>
-      {movies.map((item) => (
-        <MovieCard  movie={item} deleteAction={deleteMovie}/>
-      ))}
+    <div className="container row">
+      <div className="col-md-4">
+        <input 
+          type="text" 
+          className="form-control" 
+          placeholder="🔍 Поиск по названию..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+      <div className="col-md-4">
+        <select className='form-select bg-white text-dark' value={selectTerm} onChange={selectHandle} name="" id="">
+          <option selected="" value="">All</option>
+          <option value="Фильм">Films</option>
+          <option value="Сериал">Series</option>
+          <option value="Аниме">Anime</option>
+          <option value="Мульт-сериал">Multiplication</option>
+          <option value="Аниме-сериал">Anime-series</option>
+        </select>
+      </div>
     </div>
+    <table className="table table-hover">
+    <thead>
+      <tr>
+        <th>Poster</th>
+        <th>Title</th>
+        <th>Year</th>
+        <th>Rating</th>
+        <th>Genre</th>
+        <th>Length</th>
+        <th>Type</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {filteredMovies.map((movie) => (
+         <MovieRow 
+            key={movie.poster} 
+            movie={movie} 
+            deleteAction={deleteMovie} 
+         />
+      ))}
+    </tbody>
+  </table>
   </div>
 
   
