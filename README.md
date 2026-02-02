@@ -1,58 +1,52 @@
-# 🎬 Personal Movie Database (React + Supabase)
+# Movie Table
+Live Demo — [Ознакомиться](https://bobicentr.github.io/movie-table/)
 
-> **Status:** 🚧 Work in Progress (Active Development)
+# О проекте
+Это приложение для ведения личной базы фильмов — что посмотреть, что уже просмотрено и что стоит сохранить. Делал его как практику работы со связкой внешнего API и собственной базы данных.
 
-A dynamic dashboard for managing a personal movie watchlist. This application demonstrates the integration between a **Frontend** (React), a **Backend-as-a-Service** (Supabase), and **External APIs** (OMDb).
+Можно искать фильмы во внешнем источнике, подтягивать готовые данные и сохранять их в свою таблицу. Есть вход через админку для управления записями, а также возможность для гостя предложить фильм к добавлению.
 
-The goal of the project is to build a hybrid system where users can search for global movie data and save it to their private persistent database.
+# Технологический стек
+- ReactJS — основной фреймворк
+- JavaScript ES6+ — логика приложения
+- Supabase — база данных
+- Supabase JS SDK — работа с запросами
+- Bootstrap 5 — стили и адаптивная верстка
+- KinopoiskUnofficial API — получение информации о фильмах
 
-## 🛠 Tech Stack
+# Как установить локально
 
-*   **Frontend:** React.js (Vite), JavaScript (ES6+)
-*   **Styling:** Bootstrap 5 (Responsive Layout)
-*   **Database:** Supabase (PostgreSQL)
-*   **External API:** KinopoiskUnofficial API (Fetching movie metadata like posters, ratings)
-*   **Architecture:** Component-based, State-driven UI
+1. Склонировать репозиторий
+```bash
+git clone https://github.com/bobicentr/movie-table.git
+cd movie-table
+```
 
-## ⚡ Key Features (Implemented)
+2. Установить зависимости
+```bash
+npm install
+```
 
-*   **Database Integration:**
-    *   Real-time data fetching from **Supabase** via `@supabase/supabase-js`.
-    *   Data mapping from database columns to UI components.
-*   **Hybrid Data Flow:**
-    *   Search for movies via **KinopoiskUnofficial API** (External).
-    *   Save selected movies to **Supabase** (Internal DB).
-*   **UI/UX:**
-    *   Transformation from Card Grid to **Table View** for better data density.
-    *   Live Search with Autocomplete (Dropdown list with posters).
-    *   Responsive design (Mobile-friendly).
-*   **CRUD Operations:**
-    *   **Create:** Add movies to the database with auto-filled metadata.
-    *   **Read:** Display watchlist with sorting.
-    *   **Delete:** Remove records from the database.
+3. Запустить проект
+```bash
+npm run dev
+```
 
-## 🚀 Roadmap (Upcoming Features)
+Открыть адрес из терминала (обычно http://localhost:5173)
 
-This project is currently being refactored and expanded. Planned updates:
+# Ключевые функции
+- Поиск фильмов через Kinopoisk API
+- Автодополнение при вводе с постерами
+- Сохранение выбранных фильмов в базу
+- Табличное отображение записей
+- Сортировка данных
+- Удаление записей через админку
+- Возможность гостю предложить фильм
+- Адаптивный интерфейс
 
-- [ ] **Client-side Filtering:** Search by title, type, and year without extra API calls.
-- [ ] **Admin Panel:** Implementation of Supabase Auth (RLS) to secure delete/add actions.
-- [ ] **Advanced Sorting:** Sort by Rating or Year.
-
-## 📦 How to Run Locally
-
-1.  **Clone the repository:**
-    ```bash
-    git clone https://github.com/bobicentr/movie-table.git
-    ```
-2.  **Install dependencies:**
-    ```bash
-    npm install
-    ```
-3.  **Start the development server:**
-    ```bash
-    npm run dev
-    ```
-
----
-*Created by bobicentr*
+# Что реализовано технически
+- Связка внешнего API и собственной базы
+- Преобразование данных API под структуру таблицы
+- Работа с Supabase через SDK
+- Компонентная архитектура
+- Локальное управление состоянием

@@ -1,36 +1,29 @@
 import { useState, useEffect, useRef } from "react"
-import { supabase } from "../client.js" // Не забудь импортировать supabase!
+import { supabase } from "../client.js"!
 
 function LoginModal({ isOpen, onClose }) {
     const [emailValue, setEmailValue] = useState('')
     const [passValue, setPassValue] = useState('')
-    // 1. Сначала проверка: если закрыто — возвращаем null (сразу выходим)
     if (!isOpen) return null;
     const handleLogin = async (e) => {
         e.preventDefault()
         
-        // 1. Делаем запрос
         const { data, error } = await supabase.auth.signInWithPassword({
             email: emailValue,
             password: passValue,
         })
     
-        // 2. ПРОВЕРЯЕМ РЕЗУЛЬТАТ
         if (error) {
-            // Если есть ошибка - показываем её и ОСТАНАВЛИВАЕМСЯ
             alert("Ошибка входа: " + error.message)
             return 
         }
     
-        // 3. Если ошибки нет (код дошел сюда) - значит успех
         setEmailValue('')
         setPassValue('')
         onClose() 
     }
-    // 2. Если открыто — возвращаем верстку. ОБЯЗАТЕЛЬНО слово return!
     return (
         <div className="modal show d-block" style={{ backgroundColor: 'rgba(0,0,0,0.5)' }}>
-            {/* Добавляем dialog и content, чтобы это выглядело как окошко, а не текст на весь экран */}
             <div className="modal-dialog modal-dialog-centered">
                 <div className="modal-content">
                     

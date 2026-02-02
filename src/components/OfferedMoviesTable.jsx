@@ -4,9 +4,7 @@ import { supabase } from '../client.js'
 function OfferedMoviesTable({ onMovieAdded }) {
     const [offers, setOffers] = useState([])
 
-    useEffect(() => {
-        fetchOffers()
-    }, [])
+    
 
     const fetchOffers = async () => {
         const { data, error } = await supabase
@@ -20,6 +18,10 @@ function OfferedMoviesTable({ onMovieAdded }) {
             console.log(error.message)
         }
     }
+
+    useEffect(() => {
+      fetchOffers();
+    }, []);
 
     const handleReject = async (posterUrl) => {
         const { error } = await supabase
@@ -37,7 +39,7 @@ function OfferedMoviesTable({ onMovieAdded }) {
     const handleApprove = async (offer) => {
         const cleanMovie = {
             name: offer.name,
-            posterUrl: offer.posterUrl, // Убедись, что берем именно posterUrl
+            posterUrl: offer.posterUrl,
             year: offer.year,
             genres: offer.genres,
             rating: offer.rating,
@@ -45,30 +47,24 @@ function OfferedMoviesTable({ onMovieAdded }) {
             type: offer.type
         }
 
-        // 2. Вставляем чистый объект
         const { error: insertError } = await supabase
             .from('movies')
             .insert([cleanMovie])
 
         if (insertError) {
-            // Код 23505 означает "Нарушение уникальности" (дубликат)
             if (insertError.code === '23505' || insertError.message.includes('unique constraint')) {
                 alert("⚠️ Этот фильм УЖЕ есть в базе (совпал постер). Заявка будет удалена автоматически.")
                 
-                // Просто удаляем заявку, так как фильм и так уже есть
                 await handleReject(offer.posterUrl) 
                 return
             }
 
-            // Любая другая ошибка
             alert("Ошибка при добавлении: " + insertError.message)
             return
         }
 
-        // 3. Если успех — удаляем из предложений
         await handleReject(offer.posterUrl)
         
-        // 4. Обновляем экран
         if (onMovieAdded) onMovieAdded()
     }
 

@@ -11,12 +11,10 @@ import OfferedMoviesTable from './components/OfferedMoviesTable.jsx'
 function App() {
   const [theme, setTheme] = useState('dark')
 
-  // Функция переключения
   const toggleTheme = () => {
       setTheme(prev => prev === 'dark' ? 'light' : 'dark')
   }
 
-  // Эффект: вешает атрибут на весь сайт
   useEffect(() => {
       document.documentElement.setAttribute('data-bs-theme', theme)
   }, [theme])
@@ -34,18 +32,15 @@ function App() {
     const {
       data: { subscription },
     } = supabase.auth.onAuthStateChange((_event, session) => {
-      setSession(session) // Обновляем стейт, React перерисовывает экран
+      setSession(session)
     })
 
     return () => subscription.unsubscribe()
-  }, []) // Пустой массив = запустить 1 раз при старте
+  }, [])
 
-  
-  // --- Дополнительно: Функция выхода ---
+
   const handleLogout = async () => {
       await supabase.auth.signOut()
-      // setSession(null) писать не обязательно, 
-      // так как сработает слушатель onAuthStateChange (Часть Б)
   }
  
   const fetchMovies = async () => {
@@ -54,34 +49,27 @@ function App() {
       .select('poster:posterUrl, title:name, year, genre:genres, rating, length: filmLength, type')
     if (error) {
       console.log('Ошибка при загрузке:', error)
-      return // Выходим, дальше не идем
+      return
     }
 
-  // Если ошибки нет — обновляем стейт
     if (data) {
-        console.log('Пришли данные:', data) // <-- Посмотри сюда в консоли браузера!
+        console.log('Пришли данные:', data)
         setMovies(data)
     }
   }
 
   const deleteMovie = async (urlToDelete) => {
-    // 1. Удаляем из Базы Данных (Supabase)
     const { error } = await supabase
             .from('movies')
             .delete()
-            .eq('posterUrl', urlToDelete) // Ищем в базе по колонке posterUrl
+            .eq('posterUrl', urlToDelete)
 
         if (!error) {
-            // 2. Удаляем из Локального Стейта (UI)
-            // Ошибка была тут: item.urlToDelete
-            // Правильно: item.posterUrl (свойство объекта) !== urlToDelete (переменная)
             setMovies(movies.filter(item => item.poster !== urlToDelete))
         } else {
             alert(error.message)
         }
 }
-
-  const [error, setError] = useState('');
 
   const addMovie = (data) => {
     
@@ -142,12 +130,10 @@ function App() {
       </div>
       
       {!session ? (
-            // Если НЕТ сессии -> Кнопка открытия модалки
             <button className="btn btn-primary col-md-2" onClick={() => setIsModalOpen(true)}>
                Log In
             </button>
         ) : (
-            // Если ЕСТЬ сессия -> Кнопка выхода
             <div className="d-flex gap-2 align-items-center col-md-2">
                <button className="btn btn-danger" onClick={handleLogout}>
                   Log Out
@@ -184,18 +170,16 @@ function App() {
     <SearchBox addAction={addMovie}/>
     {session && (
     <OfferedMoviesTable 
-        onMovieAdded={() => fetchMovies()} // Перезапрашиваем основную таблицу при успехе
+        onMovieAdded={() => fetchMovies()} 
     />
     )}
     <LoginModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}/>
     <div style={{ maxHeight: '70vh', overflowY: 'auto', border: '1px solid #444', borderRadius: '8px' }}>
   
-  <table className="table table-hover table-sm mb-0"> {/* table-sm = компактность */}
+  <table className="table table-hover table-sm mb-0"> 
     
-    {/* position: sticky делает шапку плавающей. backgroundColor обязателен! */}
     <thead style={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: '#212529', color: 'white' }}>
       <tr>
-        {/* Задаем ширину здесь, тело таблицы подстроится само */}
         <th style={{ width: '60px' }}>Poster</th>
         <th style={{ width: '25%' }}>Title</th>
         <th style={{ width: '80px' }}>Year</th>
@@ -204,7 +188,6 @@ function App() {
         <th style={{ width: '100px' }}>Length</th>
         <th style={{ width: '100px' }}>Type</th>
         
-        {/* Условие для заголовка Actions */}
         {session && <th style={{ width: '80px' }}>Actions</th>}
       </tr>
     </thead>
@@ -212,7 +195,6 @@ function App() {
     <tbody>
       {filteredMovies.map((movie) => (
          <MovieRow 
-            // Используй ID если есть, poster как ключ ненадежен (могут быть одинаковые)
             key={movie.id || movie.poster} 
             movie={movie} 
             deleteAction={deleteMovie} 
